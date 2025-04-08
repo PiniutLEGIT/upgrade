@@ -1,0 +1,662 @@
+<!DOCTYPE html>
+<html lang="pl">
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta name="description" content="To jest generalnie strona zrobiona dla tych, co jeszcze nie ogarniają jak działa ulepszarka (SCP-914), albo dla tych, co chcą się dowiedzieć jakie są procenty ważone i potencjalne dropy.">
+		<meta name="keywords" content="">
+		<meta name="author" content="Pinut GAMING + ChatGPT (dla JS)">
+		<meta http-equiv="X-Ua-Compatible" content="IE-edge, chrome=1">
+		<style>
+            body{ font-family:Arial, Helvetica, sans-serif; background-color: #3d3d3d; }
+            #start{ color: #ffffff; }
+            #textDisplay{ width:100%; padding-left: 25px; padding-top: 5px; padding-bottom: 10px; }
+
+            h2 ul{ width: 200px; }
+            .setting-upgrade{ font-weight: bold; padding-top: 5px; }
+            li{ list-style-type: none; }
+
+            .danger-classes{ background-color: #ffc60c; }
+            .security-stuff{ background-color: #009c87; }
+            .weird-rooms{ background-color: rgb(148, 247, 82); }
+            .gates{ background-color: #216bf5; }
+            .checkpoints{ background-color: #adadad; }
+            .femur-particle{ background-color: #ff3650; }
+            .alpha-omega{ background-color: #df3eff; }
+
+            table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+            th, td { border: 2px solid #000000; padding: 8px; text-align: center; }
+            .confirm > td{ height: 16px; background-color: red; }
+            td { background-color: red; }
+            td.green { background-color: green; }
+            td.orange { background-color: orange; }
+
+            .jan-bg { background-color: #CC6C2C; }
+            .sci-bg { background-color: #0094FF; }
+            .spec-bg { background-color: #57C6C6; }
+            .guard-bg { background-color: #AAD341; }
+            .mtf-bg { background-color: #031A9E; }
+            .hacked-bg { background-color: #3F7F47; }
+            .director-bg { background-color: #606060; }
+            .o5-bg { background-color: #CECECE; }
+
+            .jan-text{ background-color: #00B761; }
+            .sci1-text{ background-color: #FFD800; }
+            .sci2-text{ background-color: #FF6A00; }
+            .sci3-text{ background-color: #FF0000; }
+            .spec-text{ background-color: #FF6A00; }
+            .guard-text{ background-color: #FF6A00; }
+            .chief-text{ background-color: #FF0000; }
+            .mtf-text{ background-color: #AF2F00; }
+            .com-text{ background-color: #FF7F7F; }
+            .hacked3-text{ background-color: #AF2F00; }
+            .hacked4-text{ background-color: #FF7F7F; }
+            .hacked5-text{ background-color: #000000; color: #ffffff }
+            .director-text{ background-color: #FF7F7F; }
+            .o5-text{ background-color: #000000; color: #ffffff }
+            .goc-text{ background-color: #FF7F7F; }
+        </style>
+		<title>Ulepszanie czipów</title>
+	</head>
+	<body>
+		<h2 id="start">Wybierz czip i kliknij przycisk</h2>
+		<select id="itemList">
+			<option value="">--Wybierz czip--</option>
+			<option value="jan">Woźny</option>
+			<option value="sci1">Naukowiec poziomu 1</option>
+			<option value="sci2">Naukowiec poziomu 2</option>
+            <option value="sci3">Naukowiec poziomu 3</option>
+            <option value="spec">Specjalista zabezpieczeń</option>
+            <option value="guard">Ochroniarz</option>
+            <option value="chief">Szef ochrony</option>
+            <option value="mtf">MTF</option>
+            <option value="com">Dowódca MTF</option>
+            <option value="hacked3">Zhakowany 3</option>
+            <option value="hacked4">Zhakowany 4</option>
+            <option value="hacked5">Zhakowany 5</option>
+            <option value="director">Dyrektor Placówki</option>
+            <option value="o5">O5</option>
+            <option value="goc">Zhakowana GOC</option>
+		</select>
+		<button id="showTextButton">Dotknij mnie</button>
+        <br /><br /><hr>
+        <table id="colorTable">
+            <thead>
+            <tr>
+                <th class="danger-classes">Safe</th>
+                <th class="danger-classes">Euclid</th>
+                <th class="danger-classes">Keter</th>
+                <th class="security-stuff">Biuro</th>
+                <th class="weird-rooms">Ambulatorium</th>
+                <th class="security-stuff">Ogólny</th>
+                <th class="checkpoints">Checkpoint LCZ-HCZ</th>
+                <th class="checkpoints">Checkpoint EZ-HCZ</th>
+                <th class="weird-rooms">Winda do głowicy</th>
+                <th class="security-stuff">Centrum elektryczne</th>
+                <th class="weird-rooms">Zbrojownia</th>
+                <th class="gates">Brama A</th>
+                <th class="gates">Brama B</th>
+                <th class="femur-particle">Femur Breaker</th>
+                <th class="alpha-omega">Głowica Alfa</th>
+                <th class="alpha-omega">Głowica Omega</th>
+                <th class="femur-particle">Działo cząsteczkowe</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr class="confirm">
+                <td id="safe" class="status"></th>
+                <td id="euclid" class="status"></th>
+                <td id="keter" class="status"></th>
+                <td id="office" class="status"></th>
+                <td id="medbay" class="status"></th>
+                <td id="general" class="status"></th>
+                <td id="check_lcz" class="status"></th>
+                <td id="check_ez" class="status"></th>
+                <td id="warhead" class="status"></th>
+                <td id="ec" class="status"></th>
+                <td id="armory" class="status"></th>
+                <td id="gatea" class="status"></th>
+                <td id="gateb" class="status"></th>
+                <td id="femur" class="status"></th>
+                <td id="alpha" class="status"></th>
+                <td id="omega" class="status"></th>
+                <td id="particle" class="status"></th>
+            </tr>
+            </tbody>
+        </table>
+        <br /><hr>
+		<div id="textDisplay" class="bullet-list"></div>
+		<script>
+            const itemList = document.getElementById("itemList");
+            const showTextButton = document.getElementById("showTextButton");
+            const textDisplay = document.getElementById("textDisplay");
+            const statusCells = document.querySelectorAll('.status');
+            const itemTexts = {
+                jan: `
+                <div style="width:20%">
+                <h2 class="jan-text">Woźny</h2>
+                    <ul class="jan-text">
+                        <li class="setting-upgrade">Fine</li>
+                        <ul>
+                            <li>Naukowiec poziomu 2 (12/20)</li>
+                            <li>Specjalista zabezpieczeń (8/20)</li>
+                        </ul>
+                        <li class="setting-upgrade">Very Fine</li>
+                        <ul>
+                            <li>Naukowiec poziomu 2 (8/12)</li>
+                            <li>Specjalista zabezpieczeń (12/20)</li>
+                        </ul>
+                    </ul>
+                    </div>
+                `,
+                sci1: `
+                <div style="width:20%">
+                <h2 class="sci1-text">Naukowiec poziomu 1</h2>
+                    <ul class="sci1-text">
+                        <li class="setting-upgrade">Fine</li>
+                        <ul>
+                            <li>Naukowiec poziomu 2 (12/20)</li>
+                            <li>Specjalista zabezpieczeń (8/20)</li>
+                        </ul>
+                        <li class="setting-upgrade">Very Fine</li>
+                        <ul>
+                            <li>Naukowiec poziomu 2 (8/20)</li>
+                            <li>Specjalista zabezpieczeń (12/20)</li>
+                        </ul>
+                    </ul>
+                    </div>
+                `,
+                sci2: `
+                <div style="width:20%">
+                <h2 class="sci2-text">Naukowiec poziomu 2</h2>
+                    <ul class="sci2-text">
+                        <li class="setting-upgrade">1:1</li>
+                        <ul>
+                            <li>Specjalista zabezpieczeń (10/20)</li>
+                            <li>Ochroniarz (10/20)</li>
+                        </ul>
+                        <li class="setting-upgrade">Fine</li>
+                        <ul>
+                            <li>Naukowiec poziomu 3 (15/20)</li>
+                            <li>Brak zmian (5/20)</li>
+                        </ul>
+                        <li class="setting-upgrade">Very Fine</li>
+                        <ul>
+                            <li>Naukowiec poziomu 3 (10/20)</li>
+                            <li>Zhakowana 3 (4/20)</li>
+                            <li>Brak zmian (4/20)</li>
+                            <li>Zniszczenie karty (2/20)</li>
+                        </ul>
+                    </ul>
+                    </div>
+                `,
+                sci3: `
+                <div style="width:20%">
+                <h2 class="sci3-text">Naukowiec poziomu 3</h2>
+                    <ul class="sci3-text">
+                        <li class="setting-upgrade">1:1</li>
+                        <ul>
+                            <li>Zhakowana 3 (0/0) - zawsze</li>
+                        </ul>
+                        <li class="setting-upgrade">Fine</li>
+                        <ul>
+                            <li>Zhakowana 4 (10/20)</li>
+                            <li>Brak zmian (10/20)</li>
+                        </ul>
+                        <li class="setting-upgrade">Very Fine</li>
+                        <ul>
+                            <li>Zhakowana 4 (10/20)</li>
+                            <li>MTF (4/20)</li>
+                            <li>Brak zmian (4/20)</li>
+                            <li>Zniszczenie karty (2/20)</li>
+                        </ul>
+                    </ul>
+                    </div>
+                `,
+                spec: `
+                <div style="width:20%">
+                <h2 class="spec-text">Specjalista zabezpieczeń</h2>
+                    <ul class="spec-text">
+                        <li class="setting-upgrade">1:1</li>
+                        <ul>
+                            <li>Naukowiec poziomu 2 (5/15)</li>
+                            <li>Ochroniarz (10/15)</li>
+                        </ul>
+                        <li class="setting-upgrade">Fine</li>
+                        <ul>
+                            <li>Zhakowana 3 (0/0) - zawsze</li>
+                        </ul>
+                        <li class="setting-upgrade">Very Fine</li>
+                        <ul>
+                            <li>Zhakowana 3 (8/20)</li>
+                            <li>MTF (5/20)</li>
+                            <li>Brak zmian (5/20)</li>
+                            <li>Zniszczenie karty (2/20)</li>
+                        </ul>
+                    </ul>
+                    </div>
+                `,
+                guard: `
+                <div style="width:20%">
+                <h2 class="guard-text">Ochroniarz</h2>
+                    <ul class="guard-text">
+                        <li class="setting-upgrade">1:1</li>
+                        <ul>
+                            <li>Naukowiec poziomu 2 (10/20)</li>
+                            <li>Specjalista zabezpieczeń (10/20)</li>
+                        </ul>
+                        <li class="setting-upgrade">Fine</li>
+                        <ul>
+                            <li>Szef ochrony (0/0) - zawsze</li>
+                        </ul>
+                        <li class="setting-upgrade">Very Fine</li>
+                        <ul>
+                            <li>Szef ochrony (10/20)</li>
+                            <li>MTF (5/20)</li>
+                            <li>Brak zmian (5/20)</li>
+                        </ul>
+                    </ul>
+                    </div>
+                `,
+                chief: `
+                <div style="width:20%">
+                <h2 class="chief-text">Szef ochrony</h2>
+                    <ul class="chief-text">
+                        <li class="setting-upgrade">1:1</li>
+                        <ul>
+                            <li>MTF (0/0) - zawsze</li>
+                            <li></li>
+                        </ul>
+                        <li class="setting-upgrade">Very Fine</li>
+                        <ul>
+                            <li>MTF (5/20)</li>
+                            <li>Dowódca MTF (5/20)</li>
+                            <li>Brak zmian (5/20)</li>
+                            <li>Zniszczenie karty (5/20)</li>
+                        </ul>
+                    </ul>
+                    </div>
+                `,
+                mtf: `
+                <div style="width:20%">
+                <h2 class="mtf-text">MTF</h2>
+                    <ul class="mtf-text">
+                        <li class="setting-upgrade">1:1</li>
+                        <ul>
+                            <li>Szef ochrony (0/0) - zawsze</li>
+                        </ul>
+                        <li class="setting-upgrade">Fine</li>
+                        <ul>
+                            <li>Dowódca MTF (15/20)</li>
+                            <li>Brak zmian (5/20)</li>
+                        </ul>
+                        <li class="setting-upgrade">Very Fine</li>
+                        <ul>
+                            <li>Dowódca MTF (18/20)</li>
+                            <li>Zniszczenie karty (2/20)</li>
+                        </ul>
+                    </ul>
+                    </div>
+                `,
+                com: `
+            <div style="width:20%">
+                <h2 class="com-text">Dowódca MTF</h2>
+                    <ul class="com-text">
+                        <li class="setting-upgrade">1:1</li>
+                        <ul>
+                            <li>Dyrektor placówki (10/20)</li>
+                            <li>Brak zmian (10/20)</li>
+                        </ul>
+                        <li class="setting-upgrade">Very Fine</li>
+                        <ul>
+                            <li>Zhakowana 3 (2/18)</li>
+                            <li>Zhakowana 4 (2/18)</li>
+                            <li>Zhakowana 5 (2/18)</li>
+                            <li>MTF (2/18)</li>
+                            <li>Szef ochrony (2/18)</li>
+                            <li>Dyrektor placówki (2/18)</li>
+                            <li>O5 (2/18)</li>
+                            <li>Brak zmian (2/18)</li>
+                            <li>Zniszczenie karty (2/18)</li>
+                        </ul>
+                    </ul>
+                    </div>
+                `,
+                hacked3: `
+                <div style="width:20%">
+                <h2 class="hacked3-text">Zhakowana 3 - (5 losowych)</h2>
+                    <ul class="hacked3-text">
+                        <li class="setting-upgrade">1:1</li>
+                        <ul>
+                            <li>Naukowiec poziomu 3 (5/20)</li>
+                            <li>Zhakowana 3 (15/20)</li>
+                        </ul>
+                        <li class="setting-upgrade">Fine</li>
+                        <ul>
+                            <li>Zhakowana 4 (10/25)</li>
+                            <li>Szef ochrony (10/25)</li>
+                            <li>Brak zmian (5/25)</li>
+                        </ul>
+                        <li class="setting-upgrade">Very Fine</li>
+                        <ul>
+                            <li>Szef ochrony (8/20)</li>
+                            <li>Zhakowana 4 (8/20)</li>
+                            <li>MTF (2/20)</li>
+                            <li>Zniszczenie karty (2/20)</li>
+                        </ul>
+                    </ul>
+                    </div>
+                `,
+                hacked4: `
+                <div style="width:20%">
+                <h2 class="hacked4-text">Zhakowana 4 - (6 losowych)</h2>
+                    <ul class="hacked4-text">
+                        <li class="setting-upgrade">1:1</li>
+                        <ul>
+                            <li>Zhakowana 4 (15/20)</li>
+                            <li>Brak zmian (5/20)</li>
+                        </ul>
+                        <li class="setting-upgrade">Fine</li>
+                        <ul>
+                            <li>Zhakowana 5 (10/25)</li>
+                            <li>MTF (5/25)</li>
+                            <li>Brak zmian (10/25)</li>
+                        </ul>
+                        <li class="setting-upgrade">Very Fine</li>
+                        <ul>
+                            <li>MTF (10/20)</li>
+                            <li>Zhakowana 5 (5/20)</li>
+                            <li>Zniszczenie karty (5/20)</li>
+                        </ul>
+                    </ul>
+                    </div>
+                `,
+                hacked5: `
+                <div style="width:20%">
+                <h2 class="hacked5-text">Zhakowana 5 - (7 losowych)</h2>
+                    <ul class="hacked5-text">
+                        <li class="setting-upgrade">1:1</li>
+                        <ul>
+                            <li>Zhakowana 5 (15/25)</li>
+                            <li>O5 (5/25)</li>
+                            <li>Brak zmian (5/25)</li>
+                        </ul>
+                        <li class="setting-upgrade">Fine</li>
+                        <ul>
+                            <li>Dowódca MTF (10/20)</li>
+                            <li>Brak zmian (10/20)</li>
+                        </ul>
+                        <li class="setting-upgrade">Very Fine</li>
+                        <ul>
+                            <li>Dowódca MTF (15/20)</li>
+                            <li>Zniszczenie karty (5/20)</li>
+                        </ul>
+                    </ul>
+                    </div>
+                `,
+                director: `
+                <div style="width:20%">
+                <h2 class="director-text">Dyrektor Placówki</h2>
+                    <ul class="director-text">
+                        <li class="setting-upgrade">1:1</li>
+                        <ul>
+                            <li>Dowódca MTF (0/0) - zawsze</li>
+                        </ul>
+                        <li class="setting-upgrade">Fine</li>
+                        <ul>
+                            <li>O5 (10/20)</li>
+                            <li>Brak zmian (10/20)</li>
+                        </ul>
+                        <li class="setting-upgrade">Very Fine</li>
+                        <ul>
+                            <li>O5 (15/20)</li>
+                            <li>Zniszczenie karty (5/20)</li>
+                        </ul>
+                    </ul>
+                    </div>
+                `,
+                o5: `
+                <div style="width:20%">
+                <h2 class="o5-text">O5</h2>
+                    <ul class="o5-text">
+                        <li class="setting-upgrade">1:1</li>
+                        <ul>
+                            <li>Zhakowana 5 (0/0) - zawsze</li>
+                        </ul>
+                        <li class="setting-upgrade">Very Fine</li>
+                        <ul>
+                            <li>Woźny (5/25)</li>
+                            <li>Brak zmian (20/25)</li>
+                        </ul>
+                    </ul>
+                    </div>
+                `,
+                goc: `
+                <div style="width:20%">
+                <h2 class="goc-text">Zhakowana GOC</h2>
+                    <ul class="goc-text">
+                        <li class="setting-upgrade">Fine</li>
+                        <ul>
+                            <li>Zhakowana 3 (10/25)</li>
+                            <li>Zhakowana 4 (5/25)</li>
+                            <li>Brak zmian (10/25)</li>
+                        </ul>
+                        <li class="setting-upgrade">Very Fine</li>
+                        <ul>
+                            <li>Zhakowana 4 (10/20)</li>
+                            <li>MTF (5/20)</li>
+                            <li>Zniszczenie karty (5/20)</li>
+                        </ul>
+                    </ul>
+                    </div>
+                `
+            };
+            const itemColors = {
+                jan: {
+                safe: 'green',
+                general: 'green'
+                },
+                sci1: {
+                safe: 'green',
+                general: 'green',
+                office: 'green'
+                },
+                sci2: {
+                    safe: 'green',
+                    euclid: 'green',
+                    office: 'green',
+                    general: 'green'
+                },
+                sci3: {
+                    safe: 'green',
+                    euclid: 'green',
+                    keter: 'green',
+                    office: 'green',
+                    general: 'green',
+                    medbay: 'green'
+                },
+                spec: {
+                    safe: 'green',
+                    euclid: 'green',
+                    ec: 'green',
+                    check_lcz: 'green',
+                    warhead: 'green'
+                },
+                guard: {
+                    safe: 'green',
+                    office: 'green',
+                    ec: 'green',
+                    check_lcz: 'green',
+                    check_ez: 'green'
+                },
+                chief: {
+                    safe: 'green',
+                    euclid: 'green',
+                    office: 'green',
+                    general: 'green',
+                    ec: 'green',
+                    check_lcz: 'green',
+                    check_ez: 'green'
+                },
+                mtf: {
+                    safe: 'green',
+                    euclid: 'green',
+                    keter: 'green',
+                    ec: 'green',
+                    medbay: 'green',
+                    check_lcz: 'green',
+                    check_ez: 'green',
+                    gatea: 'green',
+                    gateb: 'green'
+                },
+                com: {
+                    safe: 'green',
+                    euclid: 'green',
+                    keter: 'green',
+                    ec: 'green',
+                    armory: 'green',
+                    medbay: 'green',
+                    warhead: 'green',
+                    check_lcz: 'green',
+                    check_ez: 'green',
+                    gatea: 'green',
+                    gateb: 'green'
+                },
+                hacked3: {
+                    safe: 'green',
+                    euclid: 'green',
+                    office: 'orange',
+                    general: 'orange',
+                    keter: 'orange',
+                    medbay: 'orange',
+                    check_lcz: 'orange',
+                    check_ez: 'orange',
+                    warhead: 'orange',
+                    ec: 'orange',
+                    gatea: 'orange'
+                },
+                hacked4: {
+                    safe: 'green',
+                    euclid: 'green',
+                    keter: 'green',
+                    office: 'orange',
+                    general: 'orange',
+                    medbay: 'orange',
+                    check_lcz: 'orange',
+                    check_ez: 'orange',
+                    warhead: 'orange',
+                    ec: 'orange',
+                    gatea: 'orange',
+                    gateb: 'orange',
+                    armory: 'orange',
+                    femur: 'orange',
+                    particle: 'orange'
+                },
+                hacked5: {
+                    safe: 'green',
+                    euclid: 'green',
+                    keter: 'green',
+                    office: 'orange',
+                    general: 'orange',
+                    medbay: 'orange',
+                    check_lcz: 'orange',
+                    check_ez: 'orange',
+                    warhead: 'orange',
+                    ec: 'orange',
+                    gatea: 'orange',
+                    gateb: 'orange',
+                    armory: 'orange',
+                    femur: 'orange',
+                    alpha: 'orange',
+                    omega: 'orange',
+                    particle: 'orange'
+                },
+                director: {
+                    safe: 'green',
+                    general: 'green',
+                    office: 'green',
+                    medbay: 'green',
+                    ec: 'green',
+                    check_lcz: 'green',
+                    check_ez: 'green',
+                    warhead: 'green',
+                    femur: 'green',
+                    armory: 'green',
+                    omega: 'green',
+                    gatea: 'green',
+                    gateb: 'green',
+                    particle: 'green'
+                },
+                o5: {
+                    safe: 'green',
+                    euclid: 'green',
+                    keter: 'green',
+                    office: 'green',
+                    medbay: 'green',
+                    general: 'green',
+                    check_lcz: 'green',
+                    check_ez: 'green',
+                    warhead: 'green',
+                    ec: 'green',
+                    armory: 'green',
+                    gatea: 'green',
+                    gateb: 'green',
+                    femur: 'green',
+                    alpha: 'green',
+                    omega: 'green',
+                    particle: 'green'
+                },
+                goc: {
+                    check_lcz: 'green',
+                    check_ez: 'green',
+                    warhead: 'green',
+                    gatea: 'green',
+                    gateb: 'green'
+                }
+            };
+            const listBackgroundColors = {
+                jan: 'jan-bg',
+                sci1: 'sci-bg',
+                sci2: 'sci-bg',
+                sci3: 'sci-bg',
+                spec: 'spec-bg',
+                guard: 'guard-bg',
+                chief: 'guard-bg',
+                mtf: 'mtf-bg',
+                com: 'mtf-bg',
+                hacked3: 'hacked-bg',
+                hacked4: 'hacked-bg',
+                hacked5: 'hacked-bg',
+                director: 'director-bg',
+                o5: 'o5-bg',
+                goc: 'hacked-bg'
+            };
+            showTextButton.addEventListener("click", function () {
+                const selectedItem = itemList.value;
+                statusCells.forEach(cell => {
+                    cell.classList.remove('green', 'orange');
+                    cell.classList.add('red');
+                });
+                textDisplay.classList.remove('jan-bg', 'sci-bg', 'spec-bg', 'guard-bg', 'mtf-bg', 'hacked-bg', 'director-bg', 'o5-bg');
+                if (selectedItem) {
+                    const chooseItemOption = itemList.querySelector('option[value=""]');
+                    chooseItemOption.disabled = true;
+                    chooseItemOption.style.display = 'none';
+                    textDisplay.innerHTML =
+                        itemTexts[selectedItem] || "Kurwa, zapomniałem opisu xDD";
+                    const colors = itemColors[selectedItem];
+                    Object.keys(colors).forEach(statusId => {
+                    const cell = document.getElementById(statusId);
+                    const color = colors[statusId];
+                    cell.classList.remove('green', 'orange', 'red');
+                    cell.classList.add(color);
+                    });
+                    textDisplay.classList.add(listBackgroundColors[selectedItem]);
+
+                } else {
+                    textDisplay.innerHTML = "Serio, kurwa? Myślałeś że nie umiem robić strony w HTMLu? No cóż, umiem. Ale nie umiem JS, więc ok.";
+                }
+            });
+        </script>
+	</body>
+</html>
