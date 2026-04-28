@@ -35,7 +35,7 @@ th, td { border:1px solid var(--border); padding:5px; text-align:center; }
 
 <div class="section">
 <select id="itemList">
-<option value="">--Wybierz czip--</option>
+<option value="def">--Wybierz czip--</option>
 <option value="jan">Woźny</option>
 <option value="sci1">Naukowiec poziomu 1</option>
 <option value="sci2">Naukowiec poziomu 2</option>
@@ -99,6 +99,7 @@ const textDisplay=document.getElementById("textDisplay");
 const statusCells=document.querySelectorAll('.status');
 
 const itemTexts={
+def:`<b>Weź mnie nie wkurwiaj, co?</b>`,
 jan:`<b>Woźny</b><br>Fine: Sci2 / Spec<br>Very Fine: Sci2 / Spec`,
 sci1:`<b>Sci1</b><br>Fine: Sci2 / Spec<br>Very Fine: Sci2 / Spec`,
 sci2:`<b>Sci2</b><br>1:1: Spec / Guard<br>Fine: Sci3<br>Very Fine: Sci3 / Hack3 / Destroy`,
