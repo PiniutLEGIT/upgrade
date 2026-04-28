@@ -141,22 +141,22 @@ sci1: tableHTML("Naukowiec poziomu 1", [
 sci2: tableHTML("Naukowiec poziomu 2", [
   {level:"1:1", text:"Specjalista / Ochroniarz"},
   {level:"Fine", text:"Naukowiec poziomu 3"},
-  {level:"Very Fine", text:"Sci3 / Zhakowana 3 / Brak / Zniszczenie"}
+  {level:"Very Fine", text:"Naukowiec poziomu 3 / Zhakowana 3 / Brak zmian / Zniszczenie"}
 ]),
 sci3: tableHTML("Naukowiec poziomu 3", [
   {level:"1:1", text:"Zhakowana 3 (zawsze)"},
   {level:"Fine", text:"Zhakowana 4 / Brak"},
-  {level:"Very Fine", text:"Zhakowana 4 / MTF / Brak / Zniszczenie"}
+  {level:"Very Fine", text:"Zhakowana 4 / MTF / Brak zmian / Zniszczenie"}
 ]),
 spec: tableHTML("Specjalista zabezpieczeń", [
-  {level:"1:1", text:"Sci2 / Guard"},
+  {level:"1:1", text:"Naukowiec poziomu 2 / Guard"},
   {level:"Fine", text:"Zhakowana 3 (zawsze)"},
-  {level:"Very Fine", text:"Hack3 / MTF / Brak / Zniszczenie"}
+  {level:"Very Fine", text:"Zhakowana 3 / MTF / Brak zmian / Zniszczenie"}
 ]),
 guard: tableHTML("Ochroniarz", [
-  {level:"1:1", text:"Sci2 / Spec"},
+  {level:"1:1", text:"Naukowiec poziomu 2 / Specjalista zabezpieczeń"},
   {level:"Fine", text:"Szef ochrony (zawsze)"},
-  {level:"Very Fine", text:"Chief / MTF / Brak"}
+  {level:"Very Fine", text:"Chief / MTF / Brak zmian"}
 ]),
 chief: tableHTML("Szef ochrony", [
   {level:"1:1", text:"MTF (zawsze)"},
@@ -174,17 +174,17 @@ com: tableHTML("Dowódca MTF", [
   {level:"Very Fine", text:"Losowe wysokie poziomy / Brak / Zniszczenie"}
 ]),
 hacked3: tableHTML("Zhakowana 3", [
-  {level:"1:1", text:"Sci3 / Hack3"},
-  {level:"Fine", text:"Hack4 / Chief / Brak"},
-  {level:"Very Fine", text:"Chief / Hack4 / MTF / Zniszczenie"}
+  {level:"1:1", text:"Naukowiec poziomu 3 / Zhakowana 3"},
+  {level:"Fine", text:"Zhakowana 4 / Chief / Brak"},
+  {level:"Very Fine", text:"Chief / Zhakowana 4 / MTF / Zniszczenie"}
 ]),
 hacked4: tableHTML("Zhakowana 4", [
-  {level:"1:1", text:"Hack4 / Brak"},
-  {level:"Fine", text:"Hack5 / MTF / Brak"},
-  {level:"Very Fine", text:"MTF / Hack5 / Zniszczenie"}
+  {level:"1:1", text:"Zhakowana 4 / Brak"},
+  {level:"Fine", text:"Zhakowana 5 / MTF / Brak"},
+  {level:"Very Fine", text:"MTF / Zhakowana 5 / Zniszczenie"}
 ]),
 hacked5: tableHTML("Zhakowana 5", [
-  {level:"1:1", text:"Hack5 / O5 / Brak"},
+  {level:"1:1", text:"Zhakowana 5 / O5 / Brak"},
   {level:"Fine", text:"Dowódca / Brak"},
   {level:"Very Fine", text:"Dowódca / Zniszczenie"}
 ]),
@@ -200,8 +200,8 @@ o5: tableHTML("O5", [
 ]),
 goc: tableHTML("Zhakowana GOC", [
   {level:"1:1", text:"—"},
-  {level:"Fine", text:"Hack3 / Hack4 / Brak"},
-  {level:"Very Fine", text:"Hack4 / MTF / Zniszczenie"}
+  {level:"Fine", text:"Zhakowana 3 / Zhakowana 4 / Brak"},
+  {level:"Very Fine", text:"Zhakowana 4 / MTF / Zniszczenie"}
 ])
 };
 
@@ -210,7 +210,18 @@ def:{safe:'cyan',euclid:'cyan'},
 jan:{safe:'green',general:'green'},
 sci1:{safe:'green',general:'green',office:'green'},
 sci2:{safe:'green',euclid:'green',office:'green',general:'green'},
-sci3:{safe:'green',euclid:'green',keter:'green',office:'green',general:'green',medbay:'green'}
+sci3:{safe:'green',euclid:'green',keter:'green',office:'green',general:'green',medbay:'green'},
+spec:{safe:'green',euclid:'green',ec:'green',check_lcz:'green',warhead:'green'},
+guard:{safe:'green',office:'green',ec:'green',check_lcz:'green',check_ez:'green'},
+chief:{safe:'green',euclid:'green',office:'green',general:'green',ec:'green',check_lcz:'green',check_ez:'green'},
+mtf:{safe:'green',euclid:'green',keter:'green',ec:'green',medbay:'green',check_lcz:'green',check_ez:'green',gatea:'green',gateb:'green'},
+com:{safe:'green',euclid:'green',keter:'green',ec:'green',armory:'green',medbay:'green',warhead:'green',check_lcz:'green',check_ez:'green',gatea:'green',gateb:'green'},
+hacked3:{safe:'green',euclid:'green',office:'orange',general:'orange',keter:'orange',medbay:'orange',check_lcz:'orange',check_ez:'orange',warhead:'orange',ec:'orange',gatea:'orange'},
+hacked4:{safe:'green',euclid:'green',keter:'green',check_ez:'green',office:'orange',general:'orange',medbay:'orange',check_lcz:'orange',warhead:'orange',ec:'orange',gatea:'orange',gateb:'orange',armory:'orange',femur:'orange',particle:'orange'},
+hacked5:{safe:'green',euclid:'green',keter:'green',check_lcz:'green',check_ez:'green',office:'orange',general:'orange',medbay:'orange',warhead:'orange',ec:'orange',gatea:'orange',gateb:'orange',armory:'orange',femur:'orange',alpha:'orange',omega:'orange',particle:'orange'},
+director:{safe:'green',general:'green',office:'green',medbay:'green',ec:'green',check_lcz:'green',check_ez:'green',warhead:'green',femur:'green',armory:'green',omega:'green',gatea:'green',gateb:'green',particle:'green'},
+o5:{safe:'green',euclid:'green',keter:'green',office:'green',medbay:'green',general:'green',check_lcz:'green',check_ez:'green',warhead:'green',ec:'green',armory:'green',gatea:'green',gateb:'green',femur:'green',alpha:'green',omega:'green',particle:'green'},
+goc:{check_lcz:'green',check_ez:'green',warhead:'green',gatea:'green',gateb:'green'}
 };
 
 btn.addEventListener("click",()=>{
