@@ -11,7 +11,6 @@
   --accent: #4aa3ff;
   --border: #2a3140;
 }
-
 body.light {
   --bg: #ffffff;
   --panel: #f4f4f4;
@@ -19,43 +18,13 @@ body.light {
   --accent: #0066cc;
   --border: #ccc;
 }
-
-body {
-  font-family: Arial;
-  background: var(--bg);
-  color: var(--text);
-  padding: 20px;
-}
-
-.section {
-  background: var(--panel);
-  border: 1px solid var(--border);
-  padding: 10px;
-  margin-bottom: 10px;
-}
-
-button {
-  background: var(--accent);
-  border: none;
-  padding: 6px 10px;
-  color: white;
-  cursor: pointer;
-}
-
-select {
-  background: var(--panel);
-  color: var(--text);
-  border: 1px solid var(--border);
-  padding: 4px;
-}
-
+body { font-family: Arial; background: var(--bg); color: var(--text); padding:20px; }
+.section { background: var(--panel); border:1px solid var(--border); padding:10px; margin-bottom:10px; }
+button { background: var(--accent); border:none; padding:6px 10px; color:white; cursor:pointer; }
+select { background: var(--panel); color: var(--text); border:1px solid var(--border); padding:4px; }
 table { width:100%; border-collapse: collapse; }
 th, td { border:1px solid var(--border); padding:5px; text-align:center; }
-
-.green { background: green; }
-.orange { background: orange; }
-.red { background: red; }
-
+.green{background:green;} .orange{background:orange;} .red{background:red;}
 #textDisplay { padding:10px; }
 </style>
 </head>
@@ -88,6 +57,14 @@ th, td { border:1px solid var(--border); padding:5px; text-align:center; }
 
 <div class="section">
 <table>
+<thead>
+<tr>
+<th>Safe</th><th>Euclid</th><th>Keter</th><th>Biuro</th><th>Ambulatorium</th><th>Ogólny</th>
+<th>LCZ-HCZ</th><th>EZ-HCZ</th><th>Głowica</th><th>EC</th><th>Zbrojownia</th>
+<th>Brama A</th><th>Brama B</th><th>Femur</th><th>Alfa</th><th>Omega</th><th>Działo</th>
+</tr>
+</thead>
+<tbody>
 <tr>
 <td id="safe" class="status"></td>
 <td id="euclid" class="status"></td>
@@ -107,12 +84,11 @@ th, td { border:1px solid var(--border); padding:5px; text-align:center; }
 <td id="omega" class="status"></td>
 <td id="particle" class="status"></td>
 </tr>
+</tbody>
 </table>
 </div>
 
-<div class="section">
-<div id="textDisplay"></div>
-</div>
+<div class="section"><div id="textDisplay"></div></div>
 
 <script>
 function toggleTheme(){document.body.classList.toggle('light');}
@@ -123,39 +99,35 @@ const textDisplay=document.getElementById("textDisplay");
 const statusCells=document.querySelectorAll('.status');
 
 const itemTexts={
-jan:`<b>Woźny</b><br>Fine → Sci2 / Spec`,
-sci1:`<b>Sci1</b> → upgrade info`,
-sci2:`<b>Sci2</b> → upgrade info`,
-sci3:`<b>Sci3</b> → upgrade info`,
-spec:`<b>Spec</b> → upgrade info`,
-guard:`<b>Guard</b> → upgrade info`,
-chief:`<b>Chief</b> → upgrade info`,
-mtf:`<b>MTF</b> → upgrade info`,
-com:`<b>Commander</b> → upgrade info`,
-hacked3:`<b>Hack3</b>`,
-hacked4:`<b>Hack4</b>`,
-hacked5:`<b>Hack5</b>`,
-director:`<b>Director</b>`,
-o5:`<b>O5</b>`,
-goc:`<b>GOC</b>`
+jan:`<b>Woźny</b><br>Fine: Sci2 / Spec<br>Very Fine: Sci2 / Spec`,
+sci1:`<b>Sci1</b><br>Fine: Sci2 / Spec<br>Very Fine: Sci2 / Spec`,
+sci2:`<b>Sci2</b><br>1:1: Spec / Guard<br>Fine: Sci3<br>Very Fine: Sci3 / Hack3 / Destroy`,
+sci3:`<b>Sci3</b><br>1:1: Hack3<br>Fine: Hack4<br>Very Fine: Hack4 / MTF / Destroy`,
+spec:`<b>Spec</b><br>1:1: Sci2 / Guard<br>Fine: Hack3<br>Very Fine: Hack3 / MTF / Destroy`,
+guard:`<b>Guard</b><br>1:1: Sci2 / Spec<br>Fine: Chief<br>Very Fine: Chief / MTF`,
+chief:`<b>Chief</b><br>1:1: MTF<br>Very Fine: MTF / Commander / Destroy`,
+mtf:`<b>MTF</b><br>1:1: Chief<br>Fine: Commander<br>Very Fine: Commander / Destroy`,
+com:`<b>Commander</b><br>1:1: Director<br>Very Fine: random high tier`,
+hacked3:`<b>Hack3</b><br>mixed outcomes`,
+hacked4:`<b>Hack4</b><br>mixed outcomes`,
+hacked5:`<b>Hack5</b><br>mixed outcomes`,
+director:`<b>Director</b><br>Fine: O5<br>Very Fine: O5 / Destroy`,
+o5:`<b>O5</b><br>Very Fine: Jan / No change`,
+goc:`<b>GOC</b><br>Fine / Very Fine mixed`
 };
 
 const itemColors={
-jan:{safe:'green'},
-sci1:{safe:'green',euclid:'green'},
-sci2:{safe:'green',euclid:'green'},
-sci3:{safe:'green',euclid:'green',keter:'green'}
+jan:{safe:'green',general:'green'},
+sci1:{safe:'green',general:'green',office:'green'},
+sci2:{safe:'green',euclid:'green',office:'green',general:'green'},
+sci3:{safe:'green',euclid:'green',keter:'green',office:'green',general:'green',medbay:'green'}
 };
 
 btn.addEventListener("click",()=>{
 const val=itemList.value;
-
 statusCells.forEach(c=>c.className='status red');
-
 if(!val){textDisplay.innerText="Wybierz czip";return;}
-
 textDisplay.innerHTML=itemTexts[val]||"Brak danych";
-
 if(itemColors[val]){
 Object.entries(itemColors[val]).forEach(([id,color])=>{
 let el=document.getElementById(id);
