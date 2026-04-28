@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<title>Ulepszanie czipów</title>
+<style>
+:root {
+  --bg: #0f1115;
+  --panel: #151922;
+  --text: #e6e6e6;
+  --accent: #4aa3ff;
+  --border: #2a3140;
+}
+
+body.light {
+  --bg: #ffffff;
+  --panel: #f4f4f4;
+  --text: #000000;
+  --accent: #0066cc;
+  --border: #ccc;
+}
+
+body {
+  font-family: Arial;
+  background: var(--bg);
+  color: var(--text);
+  padding: 20px;
+}
+
+.section {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  padding: 10px;
+  margin-bottom: 10px;
+}
+
+button {
+  background: var(--accent);
+  border: none;
+  padding: 6px 10px;
+  color: white;
+  cursor: pointer;
+}
+
+select {
+  background: var(--panel);
+  color: var(--text);
+  border: 1px solid var(--border);
+  padding: 4px;
+}
+
+table { width:100%; border-collapse: collapse; }
+th, td { border:1px solid var(--border); padding:5px; text-align:center; }
+
+.green { background: green; }
+.orange { background: orange; }
+.red { background: red; }
+
+#textDisplay { padding:10px; }
+</style>
+</head>
+<body>
+
+<h2>Ulepszanie czipów</h2>
+<button onclick="toggleTheme()">Toggle Light/Dark</button>
+
+<div class="section">
+<select id="itemList">
+<option value="">--Wybierz czip--</option>
+<option value="jan">Woźny</option>
+<option value="sci1">Naukowiec poziomu 1</option>
+<option value="sci2">Naukowiec poziomu 2</option>
+<option value="sci3">Naukowiec poziomu 3</option>
+<option value="spec">Specjalista zabezpieczeń</option>
+<option value="guard">Ochroniarz</option>
+<option value="chief">Szef ochrony</option>
+<option value="mtf">MTF</option>
+<option value="com">Dowódca MTF</option>
+<option value="hacked3">Zhakowany 3</option>
+<option value="hacked4">Zhakowany 4</option>
+<option value="hacked5">Zhakowany 5</option>
+<option value="director">Dyrektor Placówki</option>
+<option value="o5">O5</option>
+<option value="goc">Zhakowana GOC</option>
+</select>
+<button id="showTextButton">Pokaż</button>
+</div>
+
+<div class="section">
+<table>
+<tr>
+<td id="safe" class="status"></td>
+<td id="euclid" class="status"></td>
+<td id="keter" class="status"></td>
+<td id="office" class="status"></td>
+<td id="medbay" class="status"></td>
+<td id="general" class="status"></td>
+<td id="check_lcz" class="status"></td>
+<td id="check_ez" class="status"></td>
+<td id="warhead" class="status"></td>
+<td id="ec" class="status"></td>
+<td id="armory" class="status"></td>
+<td id="gatea" class="status"></td>
+<td id="gateb" class="status"></td>
+<td id="femur" class="status"></td>
+<td id="alpha" class="status"></td>
+<td id="omega" class="status"></td>
+<td id="particle" class="status"></td>
+</tr>
+</table>
+</div>
+
+<div class="section">
+<div id="textDisplay"></div>
+</div>
+
+<script>
+function toggleTheme(){document.body.classList.toggle('light');}
+
+const itemList=document.getElementById("itemList");
+const btn=document.getElementById("showTextButton");
+const textDisplay=document.getElementById("textDisplay");
+const statusCells=document.querySelectorAll('.status');
+
+const itemTexts={
+jan:`<b>Woźny</b><br>Fine → Sci2 / Spec`,
+sci1:`<b>Sci1</b> → upgrade info`,
+sci2:`<b>Sci2</b> → upgrade info`,
+sci3:`<b>Sci3</b> → upgrade info`,
+spec:`<b>Spec</b> → upgrade info`,
+guard:`<b>Guard</b> → upgrade info`,
+chief:`<b>Chief</b> → upgrade info`,
+mtf:`<b>MTF</b> → upgrade info`,
+com:`<b>Commander</b> → upgrade info`,
+hacked3:`<b>Hack3</b>`,
+hacked4:`<b>Hack4</b>`,
+hacked5:`<b>Hack5</b>`,
+director:`<b>Director</b>`,
+o5:`<b>O5</b>`,
+goc:`<b>GOC</b>`
+};
+
+const itemColors={
+jan:{safe:'green'},
+sci1:{safe:'green',euclid:'green'},
+sci2:{safe:'green',euclid:'green'},
+sci3:{safe:'green',euclid:'green',keter:'green'}
+};
+
+btn.addEventListener("click",()=>{
+const val=itemList.value;
+
+statusCells.forEach(c=>c.className='status red');
+
+if(!val){textDisplay.innerText="Wybierz czip";return;}
+
+textDisplay.innerHTML=itemTexts[val]||"Brak danych";
+
+if(itemColors[val]){
+Object.entries(itemColors[val]).forEach(([id,color])=>{
+let el=document.getElementById(id);
+if(el)el.className=`status ${color}`;
+});
+}
+});
+</script>
+
+</body>
+</html>
