@@ -4,27 +4,35 @@
 <meta charset="UTF-8">
 <title>Ulepszanie czipów</title>
 <style>
-:root {
-  --bg: #0f1115;
-  --panel: #151922;
-  --text: #e6e6e6;
-  --accent: #4aa3ff;
-  --border: #2a3140;
-}
-body.light {
-  --bg: #ffffff;
-  --panel: #f4f4f4;
-  --text: #000000;
-  --accent: #0066cc;
-  --border: #ccc;
-}
-body { font-family: Arial; background: var(--bg); color: var(--text); padding:20px; }
-.section { background: var(--panel); border:1px solid var(--border); padding:10px; margin-bottom:10px; }
-button { background: var(--accent); border:none; padding:6px 10px; color:white; cursor:pointer; }
-select { background: var(--panel); color: var(--text); border:1px solid var(--border); padding:4px; }
+:root { --bg:#0f1115; --panel:#151922; --text:#e6e6e6; --accent:#4aa3ff; --border:#2a3140; }
+body.light { --bg:#ffffff; --panel:#f4f4f4; --text:#000000; --accent:#0066cc; --border:#ccc; }
+body { font-family: Arial; background:var(--bg); color:var(--text); padding:20px; }
+.section { background:var(--panel); border:1px solid var(--border); padding:10px; margin-bottom:10px; }
+button { background:var(--accent); border:none; padding:6px 10px; color:#fff; cursor:pointer; }
+select { background:var(--panel); color:var(--text); border:1px solid var(--border); padding:4px; }
+
 table { width:100%; border-collapse: collapse; }
-th, td { border:1px solid var(--border); padding:5px; text-align:center; }
-.green{background:green;} .orange{background:orange;} .red{background:red;}
+th, td { border:1px solid var(--border); padding:6px; text-align:center; }
+
+/* result tables */
+.result-table { width:100%; border-collapse: collapse; margin-top:6px; }
+.result-table td { border-top:1px solid var(--border); padding:6px; text-align:left; }
+.result-table tr:first-child td { border-top:none; }
+.level { width:120px; color:#9aa3b2; }
+
+/* status colors */
+.green{background:green;} .orange{background:orange;} .red{background:red;} .cyan{background:cyan;}
+
+/* tooltip */
+.tooltip { position:relative; cursor:help; }
+.tooltip::after {
+  content: attr(data-tip);
+  position:absolute; left:50%; transform:translateX(-50%);
+  bottom:125%; background:#000; color:#fff; padding:4px 6px; border-radius:4px;
+  white-space:nowrap; font-size:12px; opacity:0; pointer-events:none;
+}
+.tooltip:hover::after { opacity:1; }
+
 #textDisplay { padding:10px; }
 </style>
 </head>
@@ -59,9 +67,23 @@ th, td { border:1px solid var(--border); padding:5px; text-align:center; }
 <table>
 <thead>
 <tr>
-<th>Safe</th><th>Euclid</th><th>Keter</th><th>Biuro</th><th>Ambulatorium</th><th>Ogólny</th>
-<th>LCZ-HCZ</th><th>EZ-HCZ</th><th>Głowica</th><th>EC</th><th>Zbrojownia</th>
-<th>Brama A</th><th>Brama B</th><th>Femur</th><th>Alfa</th><th>Omega</th><th>Działo</th>
+<th class="tooltip" data-tip="Dostęp do Safe">Safe</th>
+<th class="tooltip" data-tip="Dostęp do Euclid">Euclid</th>
+<th class="tooltip" data-tip="Dostęp do Keter">Keter</th>
+<th class="tooltip" data-tip="Biuro">Biuro</th>
+<th class="tooltip" data-tip="Ambulatorium">Ambulatorium</th>
+<th class="tooltip" data-tip="Ogólny dostęp">Ogólny</th>
+<th class="tooltip" data-tip="Checkpoint LCZ-HCZ">LCZ-HCZ</th>
+<th class="tooltip" data-tip="Checkpoint EZ-HCZ">EZ-HCZ</th>
+<th class="tooltip" data-tip="Głowica">Głowica</th>
+<th class="tooltip" data-tip="Centrum elektryczne">EC</th>
+<th class="tooltip" data-tip="Zbrojownia">Zbrojownia</th>
+<th class="tooltip" data-tip="Brama A">Brama A</th>
+<th class="tooltip" data-tip="Brama B">Brama B</th>
+<th class="tooltip" data-tip="Femur Breaker">Femur</th>
+<th class="tooltip" data-tip="Głowica Alfa">Alfa</th>
+<th class="tooltip" data-tip="Głowica Omega">Omega</th>
+<th class="tooltip" data-tip="Działo cząsteczkowe">Działo</th>
 </tr>
 </thead>
 <tbody>
@@ -98,26 +120,93 @@ const btn=document.getElementById("showTextButton");
 const textDisplay=document.getElementById("textDisplay");
 const statusCells=document.querySelectorAll('.status');
 
+function tableHTML(title, rows){
+  return `<b>${title}</b><table class="result-table">` + rows.map(r=>
+    `<tr><td class="level">${r.level}</td><td>${r.text}</td></tr>`
+  ).join("") + `</table>`;
+}
+
 const itemTexts={
-def:`<b>Weź mnie nie wkurwiaj, co?</b>`,
-jan:`<b>Woźny</b><br>Fine: Sci2 / Spec<br>Very Fine: Sci2 / Spec`,
-sci1:`<b>Sci1</b><br>Fine: Sci2 / Spec<br>Very Fine: Sci2 / Spec`,
-sci2:`<b>Sci2</b><br>1:1: Spec / Guard<br>Fine: Sci3<br>Very Fine: Sci3 / Hack3 / Destroy`,
-sci3:`<b>Sci3</b><br>1:1: Hack3<br>Fine: Hack4<br>Very Fine: Hack4 / MTF / Destroy`,
-spec:`<b>Spec</b><br>1:1: Sci2 / Guard<br>Fine: Hack3<br>Very Fine: Hack3 / MTF / Destroy`,
-guard:`<b>Guard</b><br>1:1: Sci2 / Spec<br>Fine: Chief<br>Very Fine: Chief / MTF`,
-chief:`<b>Chief</b><br>1:1: MTF<br>Very Fine: MTF / Commander / Destroy`,
-mtf:`<b>MTF</b><br>1:1: Chief<br>Fine: Commander<br>Very Fine: Commander / Destroy`,
-com:`<b>Commander</b><br>1:1: Director<br>Very Fine: random high tier`,
-hacked3:`<b>Hack3</b><br>mixed outcomes`,
-hacked4:`<b>Hack4</b><br>mixed outcomes`,
-hacked5:`<b>Hack5</b><br>mixed outcomes`,
-director:`<b>Director</b><br>Fine: O5<br>Very Fine: O5 / Destroy`,
-o5:`<b>O5</b><br>Very Fine: Jan / No change`,
-goc:`<b>GOC</b><br>Fine / Very Fine mixed`
+def: `<b>"Weź mnie nie wkurwiaj, co?"</b>`,
+jan: tableHTML("Woźny", [
+  {level:"1:1", text:"—"},
+  {level:"Fine", text:"Naukowiec poziomu 2 / Specjalista zabezpieczeń"},
+  {level:"Very Fine", text:"Naukowiec poziomu 2 / Specjalista zabezpieczeń"}
+]),
+sci1: tableHTML("Naukowiec poziomu 1", [
+  {level:"1:1", text:"—"},
+  {level:"Fine", text:"Naukowiec poziomu 2 / Specjalista zabezpieczeń"},
+  {level:"Very Fine", text:"Naukowiec poziomu 2 / Specjalista zabezpieczeń"}
+]),
+sci2: tableHTML("Naukowiec poziomu 2", [
+  {level:"1:1", text:"Specjalista / Ochroniarz"},
+  {level:"Fine", text:"Naukowiec poziomu 3"},
+  {level:"Very Fine", text:"Sci3 / Zhakowana 3 / Brak / Zniszczenie"}
+]),
+sci3: tableHTML("Naukowiec poziomu 3", [
+  {level:"1:1", text:"Zhakowana 3 (zawsze)"},
+  {level:"Fine", text:"Zhakowana 4 / Brak"},
+  {level:"Very Fine", text:"Zhakowana 4 / MTF / Brak / Zniszczenie"}
+]),
+spec: tableHTML("Specjalista zabezpieczeń", [
+  {level:"1:1", text:"Sci2 / Guard"},
+  {level:"Fine", text:"Zhakowana 3 (zawsze)"},
+  {level:"Very Fine", text:"Hack3 / MTF / Brak / Zniszczenie"}
+]),
+guard: tableHTML("Ochroniarz", [
+  {level:"1:1", text:"Sci2 / Spec"},
+  {level:"Fine", text:"Szef ochrony (zawsze)"},
+  {level:"Very Fine", text:"Chief / MTF / Brak"}
+]),
+chief: tableHTML("Szef ochrony", [
+  {level:"1:1", text:"MTF (zawsze)"},
+  {level:"Fine", text:"—"},
+  {level:"Very Fine", text:"MTF / Dowódca / Brak / Zniszczenie"}
+]),
+mtf: tableHTML("MTF", [
+  {level:"1:1", text:"Szef ochrony (zawsze)"},
+  {level:"Fine", text:"Dowódca MTF / Brak"},
+  {level:"Very Fine", text:"Dowódca / Zniszczenie"}
+]),
+com: tableHTML("Dowódca MTF", [
+  {level:"1:1", text:"Dyrektor / Brak"},
+  {level:"Fine", text:"—"},
+  {level:"Very Fine", text:"Losowe wysokie poziomy / Brak / Zniszczenie"}
+]),
+hacked3: tableHTML("Zhakowana 3", [
+  {level:"1:1", text:"Sci3 / Hack3"},
+  {level:"Fine", text:"Hack4 / Chief / Brak"},
+  {level:"Very Fine", text:"Chief / Hack4 / MTF / Zniszczenie"}
+]),
+hacked4: tableHTML("Zhakowana 4", [
+  {level:"1:1", text:"Hack4 / Brak"},
+  {level:"Fine", text:"Hack5 / MTF / Brak"},
+  {level:"Very Fine", text:"MTF / Hack5 / Zniszczenie"}
+]),
+hacked5: tableHTML("Zhakowana 5", [
+  {level:"1:1", text:"Hack5 / O5 / Brak"},
+  {level:"Fine", text:"Dowódca / Brak"},
+  {level:"Very Fine", text:"Dowódca / Zniszczenie"}
+]),
+director: tableHTML("Dyrektor", [
+  {level:"1:1", text:"Dowódca (zawsze)"},
+  {level:"Fine", text:"O5 / Brak"},
+  {level:"Very Fine", text:"O5 / Zniszczenie"}
+]),
+o5: tableHTML("O5", [
+  {level:"1:1", text:"Zhakowana 5 (zawsze)"},
+  {level:"Fine", text:"—"},
+  {level:"Very Fine", text:"Woźny / Brak"}
+]),
+goc: tableHTML("Zhakowana GOC", [
+  {level:"1:1", text:"—"},
+  {level:"Fine", text:"Hack3 / Hack4 / Brak"},
+  {level:"Very Fine", text:"Hack4 / MTF / Zniszczenie"}
+])
 };
 
 const itemColors={
+def:{safe:'cyan',euclid:'cyan'},
 jan:{safe:'green',general:'green'},
 sci1:{safe:'green',general:'green',office:'green'},
 sci2:{safe:'green',euclid:'green',office:'green',general:'green'},
@@ -125,16 +214,16 @@ sci3:{safe:'green',euclid:'green',keter:'green',office:'green',general:'green',m
 };
 
 btn.addEventListener("click",()=>{
-const val=itemList.value;
-statusCells.forEach(c=>c.className='status red');
-if(!val){textDisplay.innerText="Wybierz czip";return;}
-textDisplay.innerHTML=itemTexts[val]||"Brak danych";
-if(itemColors[val]){
-Object.entries(itemColors[val]).forEach(([id,color])=>{
-let el=document.getElementById(id);
-if(el)el.className=`status ${color}`;
-});
-}
+  const val=itemList.value;
+  statusCells.forEach(c=>c.className='status red');
+  if(!val){ textDisplay.innerText="Wybierz czip"; return; }
+  textDisplay.innerHTML=itemTexts[val]||"Brak danych";
+  if(itemColors[val]){
+    Object.entries(itemColors[val]).forEach(([id,color])=>{
+      const el=document.getElementById(id);
+      if(el) el.className=`status ${color}`;
+    });
+  }
 });
 </script>
 
